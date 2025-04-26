@@ -11,6 +11,27 @@ function hero:new(o)
   o.lastbtn = o.btn
   o.vel = {x = 0, y = 0}
   o.facing = 1
+  o.moving_anim = anim:new{
+    t = 0,
+    trans_color = 6,
+    frame = flr(rnd(4)) + 1,
+    frame_length = 3,
+    frames = {23,24,33,34},
+    w = 1,
+    h = 1,
+    loop = true,
+  }
+  o.idle_anim = anim:new{
+    t = 0,
+    trans_color = 6,
+    frame = 1,
+    frame_length = 3,
+    frames = {21,22},
+    w = 1,
+    h = 1,
+    loop = true,
+  }
+  o.blade = nil
   return o
 end
 
@@ -25,7 +46,8 @@ function hero:held(btni)
 end
 
 function hero:update()
-  self.anim:update()
+  self.moving_anim:update()
+  self.idle_anim:update()
 
   self.lastbtn = self.btn
   self.btn = btn()
@@ -68,9 +90,35 @@ function hero:update()
   elseif self.pos.y + self.SIZE >= self.bounds.h then
     self.pos.y = self.bounds.h - self.SIZE - 1
   end
+
+  if self.blade then
+    self.blade:update()
+    if self.blade:done() then
+      self.blade = nil
+    end
+  end
+
+  if self:pressed(4) then
+    self.blade = anim:new{
+      t = 0,
+      trans_color = 6,
+      frame = 1,
+      frame_length = 0,
+      frames = {35,36,37,38},
+      w = 1,
+      h = 1,
+      loop = false,
+    }
+  end
 end
 
 function hero:draw()
-  self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  if self.vel.x == 0 and self.vel.y == 0 then
+    self.idle_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  else
+    self.moving_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  end
+  if self.blade then
+    self.blade:draw(self.pos.x + (self.facing < 0 and -8 or 8), self.pos.y, self.facing < 0)
+  end
 end
-
