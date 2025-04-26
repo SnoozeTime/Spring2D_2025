@@ -1,4 +1,4 @@
-enemy = {
+shroom = {
   WALKSPEED = 0.5,
   SIZE = 8,
   DEATH_SPEED = 5,
@@ -9,7 +9,7 @@ enemy = {
   NEW_SPORE = 1,
 }
 
-function enemy:new(o)
+function shroom:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
@@ -30,17 +30,17 @@ function enemy:new(o)
   return o
 end
 
-function enemy:pressed(btni)
+function shroom:pressed(btni)
   local btnmask = 1 << btni
   return (not (self.lastbtn & btnmask == btnmask)) and (self.btn & btnmask == btnmask)
 end
 
-function enemy:held(btni)
+function shroom:held(btni)
   local btnmask = 1 << btni
   return self.btn & btnmask == btnmask
 end
 
-function enemy:colcirc()
+function shroom:colcirc()
   if not self.alive then
     return nil
   end
@@ -52,7 +52,7 @@ function enemy:colcirc()
   }
 end
 
-function enemy:collide(collision)
+function shroom:collide(collision)
   self.alive = false
   self.anim = anim:new{
     t = 0,
@@ -68,7 +68,7 @@ function enemy:collide(collision)
 end
 
 -- return messages {id,...}
-function enemy:update(roses)
+function shroom:update(roses)
   self.anim:update()
 
   if self.alive then
@@ -76,10 +76,10 @@ function enemy:update(roses)
     if self.spore_t >= self.SPORE_WAIT_FRAMES then
       self.spore_t = 0
       return {
-        id = enemy.NEW_SPORE,
+        id = shroom.NEW_SPORE,
         spore = spore:new{
           start = {x = self.pos.x, y = self.pos.y},
-          rose = roses[flr(rnd(#roses))+1],
+          rose = rnd(roses)
         }
       }
     end
@@ -89,27 +89,43 @@ function enemy:update(roses)
     self.vel.y *= self.DEATH_FRICTION
     self.pos.x += self.vel.x
     self.pos.y += self.vel.y
-    return self.anim:done() and { id = enemy.REMOVE } or nil
+    return self.anim:done() and { id = shroom.REMOVE } or nil
   end
 end
 
-function enemy:draw()
+function shroom:draw()
   self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
 end
 
 -- Spores
 
 spore = {
-  SPEED = 0.1,
+  FLOAT_FRAMES = 4*30,
   SIZE = 3,
+  ATTACK_DISTANCE = 16,
 }
 
 function spore:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
+  o.t = 0
+  -- figure out where the rose is
   o.pos = {x = o.start.x, y = o.start.y}
-  o.vel = {x = 0, y = 0}
+  local normal
+  local len
+  normal, len = math.normalize({x=o.rose.pos.x - o.pos.x, y = o.rose.pos.y - o.pos.y})
+  -- If we're close enough, attack directly.
+  if len < self.ATTACK_DISTANCE then
+    o.target = {x = o.rose.pos.x, y = o.rose.pos.y}
+  else
+    -- Attack as far as we can
+    -- TODO: randomize this a bit
+    o.target = {
+      x = o.pos.x + normal.x * self.ATTACK_DISTANCE,
+      y = o.pos.y + normal.y * self.ATTACK_DISTANCE,
+    }
+  end
   o.anim = anim:new{
     t = 0,
     trans_color = 6,
@@ -125,24 +141,20 @@ function spore:new(o)
 end
 
 function spore:update()
+  self.t += 1
   self.anim:update()
 
-  local dp = {x = self.rose.pos.x - self.pos.x, y = self.rose.pos.y - self.pos.y}
-  local facing_normal, len = math.normalize(dp)
-
-  if facing_normal and len > 0.1 then
-    self.facing = facing_normal.x
-
-    local speed = self.SPEED
-    self.vel.x = facing_normal.x * speed
-    self.vel.y = facing_normal.y * speed
-  else
-    self.vel.x = 0
-    self.vel.y = 0
+  if self.t >= self.FLOAT_FRAMES then
+    -- plant shroom
+    return shroom:new{
+      pos = {x = self.pos.x, y = self.pos.y}
+    }
   end
 
-  self.pos.x += self.vel.x
-  self.pos.y += self.vel.y
+  self.pos.x = self.start.x + (self.target.x - self.start.x) * self.t / self.FLOAT_FRAMES
+  self.pos.y = self.start.y + (self.target.y - self.start.y) * self.t / self.FLOAT_FRAMES
+
+  return nil
 end
 
 function spore:draw()

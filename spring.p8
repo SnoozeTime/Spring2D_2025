@@ -4,7 +4,7 @@ __lua__
 #include game.lua
 #include hero.lua
 #include anim.lua
-#include enemy.lua
+#include shroom.lua
 #include collision.lua
 #include rose.lua
 #include state.lua
