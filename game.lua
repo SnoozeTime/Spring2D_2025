@@ -1,4 +1,15 @@
+
 function _init()
+  menu_init()
+end
+
+
+function game_init()
+
+  -- set the new callbacks
+  _update = game_update
+  _draw = game_draw
+
   hero = hero:new{
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
@@ -10,9 +21,11 @@ function _init()
       bounds = {w = 128, h = 128},
     })
   end
+
+
 end
 
-function _draw()
+function game_draw()
   rectfill(0,0,127,127,0)
   map()
   hero:draw()
@@ -21,7 +34,7 @@ function _draw()
   end
 end
 
-function _update()
+function game_update()
   hero:update(enemies)
   local deads = {}
   for i=1,#enemies do
