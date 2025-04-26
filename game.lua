@@ -27,7 +27,7 @@ function game_init()
   spores = {}
 
   roses = {}
-  for i=1,3 do
+  for i=1,1 do
     add(roses, rose:new{
       pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
     })
@@ -87,8 +87,21 @@ function game_update()
   for i=#dead_spores,1,-1 do
     deli(spores,dead_spores[i])
   end
+  local dead_roses = {}
   for i=1,#roses do
-    roses[i]:update()
+    if not roses[i]:update() then
+      add(dead_roses, i)
+    end
+  end
+  for i=#dead_roses,1,-1 do
+    deli(roses,dead_roses[i])
+  end
+
+  if #roses <= 0 then
+    gameover_init()
+  end
+  if #spores <= 0 and #shrooms <= 0 then
+    win_init()
   end
 
   for i=1,#vines do

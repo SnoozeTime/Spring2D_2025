@@ -7,15 +7,42 @@ function rose:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
+  self.withering = false
+  o.anim = anim:new{
+    t = 0,
+    trans_color = 6,
+    frame = 1,
+    frame_length = 0,
+    -- Only one frame.
+    frames = {8},
+    w = 1,
+    h = 1,
+    loop = true,
+  }
   return o
 end
 
+function rose:wither()
+  if not self.withering then
+    self.withering = true
+    self.anim = anim:new{
+      t = 0,
+      trans_color = 6,
+      frame = 1,
+      frame_length = 0,
+      frames = {8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0},
+      w = 1,
+      h = 1,
+      loop = false,
+    }
+  end
+end
+
 function rose:update()
+  self.anim:update()
+  return self.anim:done()
 end
 
 function rose:draw()
-  palt()
-  palt(0,false)
-  palt(self.TCOLOR,true)
-  spr(8,self.pos.x,self.pos.y)
+  self.anim:draw(self.pos.x,self.pos.y)
 end
