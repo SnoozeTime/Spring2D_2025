@@ -47,7 +47,14 @@ function menu_draw()
     end
 
 
-    color(8)
+    color(0)
+
+    palt(6, true)
+
+    sp = 128
+    sx, sy = (sp % 16) * 8, (sp \ 16) * 8
+    sspr(sx, sy, 8*5, 8*3, 25, 60, 8*5*2, 8*3*2)
+    --spr(128, 56, 50, 5, 3)
     print("Press x/o to start the game", 10, 104)
 end
 
