@@ -7,7 +7,7 @@ end
 
 
 function menu_update()
-    if (btnp(❎)) game_init()
+    if (btnp(❎)) then game_init() end
 end
 
 
