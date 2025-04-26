@@ -11,6 +11,15 @@ function hero:new(o)
   o.lastbtn = o.btn
   o.vel = {x = 0, y = 0}
   o.facing = 1
+  o.anim = anim:new{
+          t = 0,
+          trans_color = 6,
+          frame = flr(rnd(4)) + 1,
+          frame_length = flr(rnd(10)),
+          frames = {23,24,33,34},
+          w = 1,
+          h = 1,
+        }
   return o
 end
 

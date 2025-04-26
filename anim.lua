@@ -19,5 +19,8 @@ function anim:update()
 end
 
 function anim:draw(x, y, flip_x, flip_y)
+  palt()
+  palt(0, false)
+  palt(self.trans_color, true)
   spr(self.frames[self.frame], x, y, self.w, self.h, flip_x, flip_y)
 end
