@@ -10,17 +10,21 @@ function game_init()
   _update = game_update
   _draw = game_draw
 
+  music(0)
+
   hero = hero:new{
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
          }
-  enemies = {}
-  for i=1,10 do
-    add(enemies, enemy:new{
+  shrooms = {}
+  for i=1,3 do
+    add(shrooms, shroom:new{
       pos = {x = flr(rnd(120)), y = flr(rnd(120))},
       bounds = {w = 128, h = 128},
     })
   end
+
+  spores = {}
 
   roses = {}
   for i=1,3 do
@@ -43,8 +47,11 @@ function game_draw()
   for i=1,#roses do
     roses[i]:draw()
   end
-  for i=1,#enemies do
-    enemies[i]:draw()
+  for i=1,#shrooms do
+    shrooms[i]:draw()
+  end
+  for i=1,#spores do
+    spores[i]:draw()
   end
 
   for i=1,#vines do
@@ -54,15 +61,31 @@ function game_draw()
 end
 
 function game_update()
-  hero:update(enemies)
-  local deads = {}
-  for i=1,#enemies do
-    if not enemies[i]:update(hero) then
-      add(deads, i)
+  hero:update(shrooms)
+  local dead_shrooms = {}
+  for i=1,#shrooms do
+    local message = shrooms[i]:update(roses)
+    if message then
+      if message.id == shroom.REMOVE then
+        add(dead_shrooms, i)
+      elseif message.id == shroom.NEW_SPORE then
+        add(spores, message.spore)
+      end
     end
   end
-  for i=#deads,1,-1 do
-    deli(enemies,deads[i])
+  for i=#dead_shrooms,1,-1 do
+    deli(shrooms,dead_shrooms[i])
+  end
+  local dead_spores = {}
+  for i=1,#spores do
+    local new_shroom = spores[i]:update()
+    if new_shroom then
+      add(shrooms, new_shroom)
+      add(dead_spores,i)
+    end
+  end
+  for i=#dead_spores,1,-1 do
+    deli(spores,dead_spores[i])
   end
   for i=1,#roses do
     roses[i]:update()

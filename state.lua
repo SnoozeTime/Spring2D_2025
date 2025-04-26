@@ -6,9 +6,9 @@ function menu_init()
 
 
     -- let's draw a bunch of mushrooms
-    enemies = {}
+    shrooms = {}
     for i=1,10 do
-        add(enemies, enemy:new{
+        add(shrooms, shroom:new{
         pos = {x = flr(rnd(120)), y = flr(rnd(120))},
         anim =  anim:new{
             t = 0,
@@ -27,8 +27,8 @@ end
 
 
 function menu_update()
-    for i=1,#enemies do
-        enemies[i].anim:update()
+    for i=1,#shrooms do
+        shrooms[i].anim:update()
     end
 
     if (btnp(❎)) then game_init() end
@@ -42,8 +42,8 @@ function menu_draw()
     palt(6, true)
     map(32, 0)
 
-    for i=1,#enemies do
-        enemies[i].anim:draw(enemies[i].pos.x, enemies[i].pos.y, enemies[i].pos.x > 64, false)
+    for i=1,#shrooms do
+        shrooms[i].anim:draw(shrooms[i].pos.x, shrooms[i].pos.y, shrooms[i].pos.x > 64, false)
     end
 
 
