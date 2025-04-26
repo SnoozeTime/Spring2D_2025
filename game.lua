@@ -3,14 +3,27 @@ function _init()
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
          }
+  enemies = {}
+  for i=1,10 do
+    add(enemies, enemy:new{
+      pos = {x = flr(rnd(120)), y = flr(rnd(120))},
+      bounds = {w = 128, h = 128},
+    })
+  end
 end
 
 function _draw()
   rectfill(0,0,127,127,0)
   map()
   hero:draw()
+  for i=1,#enemies do
+    enemies[i]:draw()
+  end
 end
 
 function _update()
   hero:update()
+  for i=1,#enemies do
+    enemies[i]:update(hero)
+  end
 end
