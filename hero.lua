@@ -113,15 +113,18 @@ function hero:update(enemies)
 
   if self.blade then
     local colcirc = {
-      x = self.pos.x + 4 + (self.facing > 0 and 8 or -8),
+      x = self.pos.x + 4 + (self.facing > 0 and 4 or -4),
       y = self.pos.y + 4,
-      r = 6,
+      r = 8,
     }
 
     for i=1,#enemies do
-      local col = collision.circcirc(colcirc, enemies[i]:colcirc())
-      if col then
-        printh("SLASH!")
+      local enemy_col = enemies[i]:colcirc()
+      if enemy_col then
+        local col = collision.circcirc(colcirc, enemy_col)
+        if col then
+          enemies[i]:collide(col)
+        end
       end
     end
   end

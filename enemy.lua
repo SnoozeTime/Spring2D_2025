@@ -1,6 +1,8 @@
 enemy = {
   WALKSPEED = 0.5,
   SIZE = 8,
+  DEATH_SPEED = 5,
+  DEATH_FRICTION = 0.8,
 }
 
 function enemy:new(o)
@@ -19,6 +21,7 @@ function enemy:new(o)
     h = 1,
     loop = true,
   }
+  o.alive = true
   return o
 end
 
@@ -41,6 +44,10 @@ function normalize(vec)
 end
 
 function enemy:colcirc()
+  if not self.alive then
+    return nil
+  end
+
   return {
     x = self.pos.x + self.SIZE / 2,
     y = self.pos.y + self.SIZE / 2,
@@ -48,38 +55,59 @@ function enemy:colcirc()
   }
 end
 
+function enemy:collide(collision)
+  self.alive = false
+  self.anim = anim:new{
+    t = 0,
+    trans_color = 6,
+    frame = 1,
+    frame_length = 0,
+    frames = {5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0},
+    w = 1,
+    h = 1,
+    loop = false,
+  }
+  self.vel = {x = collision.x*self.DEATH_SPEED, y = collision.y*self.DEATH_SPEED}
+end
+
 function enemy:update(hero)
   self.anim:update()
 
-  self.lastbtn = self.btn
-  self.btn = btn()
+  if self.alive then
+    local dp = {x = hero.pos.x - self.pos.x, y = hero.pos.y - self.pos.y}
+    local facing_normal, len = normalize(dp)
 
-  local dp = {x = hero.pos.x - self.pos.x, y = hero.pos.y - self.pos.y}
-  local facing_normal, len = normalize(dp)
+    if facing_normal then
+      self.facing = facing_normal.x
 
-  if facing_normal then
-    self.facing = facing_normal.x
+      local walkspeed = self.WALKSPEED
+      self.vel.x = facing_normal.x * walkspeed
+      self.vel.y = facing_normal.y * walkspeed
+    else
+      self.vel.x = 0
+      self.vel.y = 0
+    end
 
-    local walkspeed = self.WALKSPEED
-    self.vel.x = facing_normal.x * walkspeed
-    self.vel.y = facing_normal.y * walkspeed
+    self.pos.x += self.vel.x
+    if self.pos.x < 0 then
+      self.pos.x = 0
+    elseif self.pos.x + self.SIZE >= self.bounds.w then
+      self.pos.x = self.bounds.w - self.SIZE - 1
+    end
+
+    self.pos.y += self.vel.y
+    if self.pos.y < 0 then
+      self.pos.y = 0
+    elseif self.pos.y + self.SIZE >= self.bounds.h then
+      self.pos.y = self.bounds.h - self.SIZE - 1
+    end
+    return true
   else
-    self.vel.x = 0
-    self.vel.y = 0
-  end
-
-  self.pos.x += self.vel.x
-  if self.pos.x < 0 then
-    self.pos.x = 0
-  elseif self.pos.x + self.SIZE >= self.bounds.w then
-    self.pos.x = self.bounds.w - self.SIZE - 1
-  end
-
-  self.pos.y += self.vel.y
-  if self.pos.y < 0 then
-    self.pos.y = 0
-  elseif self.pos.y + self.SIZE >= self.bounds.h then
-    self.pos.y = self.bounds.h - self.SIZE - 1
+    self.vel.x *= self.DEATH_FRICTION
+    self.vel.y *= self.DEATH_FRICTION
+    self.pos.x += self.vel.x
+    self.pos.y += self.vel.y
+    return not self.anim:done()
   end
 end
 

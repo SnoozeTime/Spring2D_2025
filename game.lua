@@ -23,7 +23,13 @@ end
 
 function _update()
   hero:update(enemies)
+  local deads = {}
   for i=1,#enemies do
-    enemies[i]:update(hero)
+    if not enemies[i]:update(hero) then
+      add(deads, i)
+    end
+  end
+  for i=#deads,1,-1 do
+    deli(enemies,deads[i])
   end
 end
