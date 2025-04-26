@@ -15,7 +15,7 @@ function shroom:new(o)
   self.__index = self
   o.vel = {x = 0, y = 0}
   o.facing = 1
-  o.spore_t = 0
+  o.spore_t = flr(rnd(o.SPORE_WAIT_FRAMES))
   o.anim = anim:new{
     t = 0,
     trans_color = 6,
@@ -118,6 +118,7 @@ function spore:new(o)
   -- If we're close enough, attack directly.
   if len < self.ATTACK_DISTANCE then
     o.target = {x = o.rose.pos.x, y = o.rose.pos.y}
+    o.target_acquired = true
   else
     -- Attack as far as we can
     -- TODO: randomize this a bit
@@ -125,6 +126,7 @@ function spore:new(o)
       x = o.pos.x + normal.x * self.ATTACK_DISTANCE,
       y = o.pos.y + normal.y * self.ATTACK_DISTANCE,
     }
+    o.target_acquired = false
   end
   o.anim = anim:new{
     t = 0,
@@ -145,6 +147,9 @@ function spore:update()
   self.anim:update()
 
   if self.t >= self.FLOAT_FRAMES then
+    if self.target_acquired then
+      self.rose:wither()
+    end
     -- plant shroom
     return shroom:new{
       pos = {x = self.pos.x, y = self.pos.y}
