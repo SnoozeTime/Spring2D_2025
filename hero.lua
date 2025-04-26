@@ -45,7 +45,7 @@ function hero:held(btni)
   return self.btn & btnmask == btnmask
 end
 
-function hero:update()
+function hero:update(enemies)
   self.moving_anim:update()
   self.idle_anim:update()
 
@@ -109,6 +109,24 @@ function hero:update()
       h = 1,
       loop = false,
     }
+  end
+
+  if self.blade then
+    local colcirc = {
+      x = self.pos.x + 4 + (self.facing > 0 and 4 or -4),
+      y = self.pos.y + 4,
+      r = 8,
+    }
+
+    for i=1,#enemies do
+      local enemy_col = enemies[i]:colcirc()
+      if enemy_col then
+        local col = collision.circcirc(colcirc, enemy_col)
+        if col then
+          enemies[i]:collide(col)
+        end
+      end
+    end
   end
 end
 
