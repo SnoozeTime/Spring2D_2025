@@ -22,7 +22,7 @@ function _draw()
 end
 
 function _update()
-  hero:update()
+  hero:update(enemies)
   for i=1,#enemies do
     enemies[i]:update(hero)
   end

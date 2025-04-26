@@ -40,6 +40,14 @@ function normalize(vec)
   return {x = vec.x/len, y = vec.y/len}, len
 end
 
+function enemy:colcirc()
+  return {
+    x = self.pos.x + self.SIZE / 2,
+    y = self.pos.y + self.SIZE / 2,
+    r = self.SIZE / 2,
+  }
+end
+
 function enemy:update(hero)
   self.anim:update()
 
