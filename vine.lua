@@ -1,6 +1,13 @@
 -- 
 vine = {
-
+    MIN_WALK_FRAME = 30*1,
+    MAX_WALK_FRAME = 30 * 5,
+    walk_counter = 0,
+    speed = 0.4,
+    spawn_freq = 20,
+    spawn_counter = 0,
+    MAX_SEGMENTS = 10,
+    MIN_SEGMENT = 3
 }
 
 function vine:new(o)
@@ -8,7 +15,19 @@ function vine:new(o)
     setmetatable(o, self)
     self.__index = self
 
-    o.facing = 1
+    
+
+    -- normal, len = math.normalize
+    -- get a random point on the map and move toward it.
+    local normal
+    local len
+    dir, len = math.normalize({x=flr(rnd(120))- o.pos.x, y=flr(rnd(120))-o.pos.y})
+    o.dir = dir
+    o.state = "walking"
+    o.facing = sgn(o.dir.x)
+    o.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
+    o.segments = 0
+    o.segment_count =  flr(rnd(self.MAX_SEGMENTS-self.MIN_SEGMENT))+self.MIN_SEGMENT
     o.anim = anim:new{
         t = 0,
         trans_color = 6,
@@ -19,15 +38,109 @@ function vine:new(o)
         h = 1,
         loop = true,
     }
+    o.shooting_anim = anim:new{
+        t = 0,
+        trans_color = 6,
+        frame = 1,
+        frame_length = 3,
+        frames = {49},
+        w = 1,
+        h = 1,
+        loop = true,
+    }
     o.alive = true
     return o
 end
 
 function vine:update()
     self.anim:update()
+
+    if self.state == "walking" then 
+
+        if self.walk_counter > self.current_walk_frames then
+            self.state = "shooting"
+        else
+
+            self.pos.x += self.dir.x*self.speed
+            self.pos.y += self.dir.y*self.speed
+        
+            -- if there is a risk of going off screen, just change the direction
+            if (self.pos.x < 8 and self.dir.x < 0) or (self.pos.x > 120 and self.dir.x > 0) then
+                self.dir.x *= -1
+            end
+
+            if (self.pos.y < 8 and self.dir.y < 0) or (self.pos.y > 120 and self.dir.y > 0) then
+                self.dir.y *= -1
+            end
+        
+        end
+
+        -- not necessary to do every frame but oh well
+        self.facing = sgn(self.dir.x)
+
+        self.walk_counter += 1
+    elseif self.state == "shooting" then
+
+        if self.spawn_counter > self.spawn_freq then
+            self.segments += 1
+            self.spawn_counter = 0
+
+            if self.segments > self.segment_count then
+                self.state = "attracting"
+            end
+        else
+            self.spawn_counter += 1
+        end
+    elseif self.state == "attracting" then
+
+        self.segments -= 1
+
+        if self.segments == 0 then
+            self.state = "walking"
+
+            -- reinitialize the walking state
+            local normal
+            local len
+            dir, len = math.normalize({x=flr(rnd(120))- self.pos.x, y=flr(rnd(120))-self.pos.y})
+            self.dir = dir
+            self.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
+        end
+
+
+    end
+
 end
 
 
 function vine:draw()
-    self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+    if self.state == "walking" then 
+        self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+    else
+        self.shooting_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+        for n=1,self.segments do
+            local frame
+            if n == self.segments then
+                frame = 51
+            else
+                frame = 50
+            end
+            palt()
+            palt(0, false)
+            palt(6, true)
+            spr(frame, self.pos.x + n * 8 * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
+            --self.draw_segment(i)
+        end
+    end
 end
+
+
+function vine:draw_segment(n)
+
+    
+
+    palt()
+    palt(0, false)
+    palt(6, true)
+    spr(50, self.pos.x + n * 8 * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
+end
+  
