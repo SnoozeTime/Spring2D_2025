@@ -28,6 +28,13 @@ function game_init()
       pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
     })
   end
+
+  vines = {}
+  for i=1,2 do 
+    add(vines, vine:new {
+      pos = {x = flr(rnd(120)), y = flr(rnd(120))}}
+    )
+  end
 end
 
 function game_draw()
@@ -38,6 +45,10 @@ function game_draw()
   end
   for i=1,#enemies do
     enemies[i]:draw()
+  end
+
+  for i=1,#vines do
+    vines[i]:draw()
   end
   hero:draw()
 end
@@ -55,5 +66,9 @@ function game_update()
   end
   for i=1,#roses do
     roses[i]:update()
+  end
+
+  for i=1,#vines do
+    vines[i]:update()
   end
 end
