@@ -12,8 +12,9 @@ end
 
 
 function menu_draw()
-    cls()
-    print("This is the menu", 1, 1)
+    cls(7)
+    color(8)
+    print("Press x/o to start the game", 10, 64)
 end
 
 -- State for the main game
