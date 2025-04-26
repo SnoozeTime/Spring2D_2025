@@ -6,7 +6,7 @@ function collision.circcirc(a,b)
   local distance = sqrt(ray.x*ray.x + ray.y*ray.y)
   if distance < a.r + b.r then
     local magnitude = a.r + b.r - distance
-    return normalize(ray)
+    return math.normalize(ray)
   end
   return nil
 end

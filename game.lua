@@ -10,6 +10,8 @@ function game_init()
   _update = game_update
   _draw = game_draw
 
+  music(0)
+
   hero = hero:new{
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
@@ -21,6 +23,8 @@ function game_init()
       bounds = {w = 128, h = 128},
     })
   end
+
+  spores = {}
 
   roses = {}
   for i=1,3 do
@@ -39,6 +43,9 @@ function game_draw()
   for i=1,#enemies do
     enemies[i]:draw()
   end
+  for i=1,#spores do
+    spores[i]:draw()
+  end
   hero:draw()
 end
 
@@ -46,12 +53,20 @@ function game_update()
   hero:update(enemies)
   local deads = {}
   for i=1,#enemies do
-    if not enemies[i]:update(hero) then
-      add(deads, i)
+    local message = enemies[i]:update(roses)
+    if message then
+      if message.id == enemy.REMOVE then
+        add(deads, i)
+      elseif message.id == enemy.NEW_SPORE then
+        add(spores, message.spore)
+      end
     end
   end
   for i=#deads,1,-1 do
     deli(enemies,deads[i])
+  end
+  for i=1,#spores do
+    spores[i]:update()
   end
   for i=1,#roses do
     roses[i]:update()
