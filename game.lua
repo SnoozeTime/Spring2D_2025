@@ -159,7 +159,9 @@ function game_update(state)
   end
   if next(state.shroom_grid.grid) == nil and #state.spores <= 0 and #state.vines <= 0 then
     if state.level < #state.LEVELS then
-      level_switch_init(state.level + 1)
+      local alive = #state.roses
+      local total = state.LEVELS[state.level].roses
+      level_switch_init(state.level + 1, alive, total)
     else
       win_init()
     end
