@@ -12,16 +12,26 @@ function game_init()
 
   music(0)
 
+  shroom_grid = grid:new{
+           -- 120 so we don't place shrooms just outside the bottom of the map
+           bounds = {w = 120, h = 120},
+           divisions = 10,
+         }
+
   ninja = hero:new{
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
          }
-  shrooms = {}
-  for i=1,1 do
-    add(shrooms, shroom:new{
-      pos = {x = flr(rnd(120)), y = flr(rnd(120))},
-      bounds = {w = 128, h = 128},
-    })
+  for i=1,5 do
+    while true do  -- please don't take too long lmao
+      local pos = {x = flr(rnd(120)), y = flr(rnd(120))}
+      if shroom_grid:empty(pos) then
+        shroom_grid:insert(pos, shroom:new{
+          pos = pos,
+        })
+        break
+      end
+    end
   end
 
   spores = {}
@@ -47,8 +57,8 @@ function game_draw()
   for i=1,#roses do
     roses[i]:draw()
   end
-  for i=1,#shrooms do
-    shrooms[i]:draw()
+  for _,shroom in pairs(shroom_grid.grid) do
+    shroom:draw()
   end
   for i=1,#spores do
     spores[i]:draw()
@@ -61,27 +71,27 @@ function game_draw()
 end
 
 function game_update()
-  ninja:update(shrooms, vines)
-  local dead_shrooms = {}
+  ninja:update(shroom_grid, vines)
   local dead_vines = {}
-  for i=1,#shrooms do
-    local message = shrooms[i]:update(roses)
+  for id,shroom in pairs(shroom_grid.grid) do
+    local message = shroom:update(roses)
     if message then
       if message.id == shroom.REMOVE then
-        add(dead_shrooms, i)
+        shroom_grid.grid[id] = nil
       elseif message.id == shroom.NEW_SPORE then
-        add(spores, message.spore)
+        if shroom_grid:empty(message.spore.target) then
+          add(spores, message.spore)
+        end
       end
     end
-  end
-  for i=#dead_shrooms,1,-1 do
-    deli(shrooms,dead_shrooms[i])
   end
   local dead_spores = {}
   for i=1,#spores do
     local new_shroom = spores[i]:update()
     if new_shroom then
-      add(shrooms, new_shroom)
+      if shroom_grid:empty(new_shroom.pos) then
+        shroom_grid:insert(new_shroom.pos, new_shroom)
+      end
       add(dead_spores,i)
     end
   end
@@ -101,7 +111,7 @@ function game_update()
   if #roses <= 0 then
     gameover_init()
   end
-  if #spores <= 0 and #shrooms <= 0 and #vines <= 0 then
+  if next(shroom_grid.grid) == nil and #spores <= 0 and #vines <= 0 then
     win_init()
   end
 

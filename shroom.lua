@@ -56,12 +56,17 @@ function shroom:collide(collision)
   if self.alive then
     self.alive = false
     sfx(0)
+    local d = self.anim.frames[self.anim.frame]
+    if self.growing then
+      d = self.growing.frames[self.growing.frame]
+    end
+    self.growing = nil  -- old enough to die :P
     self.anim = anim:new{
       t = 0,
       trans_color = 6,
       frame = 1,
       frame_length = 0,
-      frames = {5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0},
+      frames = {d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0},
       w = 1,
       h = 1,
       loop = false,
@@ -72,7 +77,11 @@ end
 
 -- return messages {id,...}
 function shroom:update(roses)
-  self.anim:update()
+  if self.growing and not self.growing:done() then
+    self.growing:update()
+  else
+    self.anim:update()
+  end
 
   if self.alive then
     self.spore_t += 1
@@ -97,7 +106,11 @@ function shroom:update(roses)
 end
 
 function shroom:draw()
-  self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  if self.growing and not self.growing:done() then
+    self.growing:draw(self.pos.x, self.pos.y, self.facing < 0)
+  else
+    self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  end
 end
 
 -- Spores
@@ -124,7 +137,7 @@ function spore:new(o)
     o.target_acquired = true
   else
     -- Attack as far as we can
-    local perturbed = math.perturb(normal, 0.2)
+    local perturbed = math.perturb(normal)
     o.target = {
       x = o.pos.x + perturbed.x * self.ATTACK_DISTANCE,
       y = o.pos.y + perturbed.y * self.ATTACK_DISTANCE,
@@ -155,7 +168,17 @@ function spore:update()
     end
     -- plant shroom
     return shroom:new{
-      pos = {x = self.pos.x, y = self.pos.y}
+      pos = {x = self.pos.x, y = self.pos.y},
+      growing = anim:new{
+        t = 0,
+        trans_color = 6,
+        frame = 1,
+        frame_length = 12,
+        frames = {3,4,5},
+        w = 1,
+        h = 1,
+        loop = false,
+      },
     }
   end
 
