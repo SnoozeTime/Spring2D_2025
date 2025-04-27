@@ -4,7 +4,7 @@ function gameover_init()
 end
 
 function gameover_update()
-  if (btnp(❎)) then menu_init() end
+  if (btnp(4) or btnp(5)) then menu_init() end
 end
 
 function gameover_draw()

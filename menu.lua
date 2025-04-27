@@ -34,7 +34,8 @@ function menu_update()
 
     text:update()
 
-    if (btnp(❎)) then game_init(LEVELS[1]) end
+    -- start the first level
+    if (btnp(4) or btnp(5)) then game_init(1) end
 end
 
 
