@@ -7,8 +7,8 @@ end
 function game_init(level_index)
   level = level_index
   LEVELS = {
-    {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={{0,64},{128,64}}},
-    {mushrooms=3, roses=1, start_pos={5,5}, vines=2, river={{0,64},{128,64}}},
+    {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
+    {mushrooms=3, roses=1, start_pos={5,5}, vines=2, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
   }
   local level_desc = LEVELS[level_index]
 
@@ -25,7 +25,7 @@ function game_init(level_index)
          }
 
   -- rivers etc
-  env = river:new{}
+  env = river:new{river_start=level_desc.river.river_start, river_end=level_desc.river.river_end, bridge=level_desc.river.bridge}
 
   ninja = hero:new{
            pos = {x = level_desc.start_pos[1], y = level_desc.start_pos[2]},
@@ -53,9 +53,17 @@ function game_init(level_index)
   end
 
   vines = {}
-  for i=1,2 do 
+  for i=1,level_desc.vines do 
+
+    local vine_x = flr(rnd(120))
+    local vine_y = flr(rnd(120))
+
+    while env:in_river(vine_x, vine_y, vine.SIZE) do
+      vine_x = flr(rnd(120))
+      vine_y = flr(rnd(120))
+    end
     add(vines, vine:new {
-      pos = {x = flr(rnd(120)), y = flr(rnd(120))}}
+      pos = {x = vine_x, y = vine_y}}
     )
   end
 end
