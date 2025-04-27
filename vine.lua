@@ -2,12 +2,9 @@
 vine = {
     MIN_WALK_FRAME = 30*1,
     MAX_WALK_FRAME = 30 * 5,
-    walk_counter = 0,
-    speed = 0.4,
-    spawn_freq = 20,
-    spawn_counter = 0,
-    release_freq = 10,
-    release_counter = 0,
+    SPEED = 0.4,
+    SPAWN_FREQ = 20,
+    RELEASE_FREQ = 10,
     MAX_SEGMENTS = 10,
     MIN_SEGMENT = 3
 }
@@ -31,6 +28,9 @@ function vine:new(o)
     o.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
     o.segments = 0
     o.segment_count =  flr(rnd(self.MAX_SEGMENTS-self.MIN_SEGMENT))+self.MIN_SEGMENT
+    o.walk_counter = 0
+    o.spawn_counter = 0
+    o.release_counter = 0
     o.anim = anim:new{
         t = 0,
         trans_color = 6,
@@ -84,8 +84,8 @@ function vine:update(hero)
             self.state = "shooting"
         else
 
-            self.pos.x += self.dir.x*self.speed
-            self.pos.y += self.dir.y*self.speed
+            self.pos.x += self.dir.x*self.SPEED
+            self.pos.y += self.dir.y*self.SPEED
         
             -- if there is a risk of going off screen, just change the direction
             if (self.pos.x < 8 and self.dir.x < 0) or (self.pos.x > 120 and self.dir.x > 0) then
@@ -128,7 +128,7 @@ function vine:update(hero)
 
         -- then add a segment if no collision
         if not collided then
-            if self.spawn_counter > self.spawn_freq then
+            if self.spawn_counter > self.SPAWN_FREQ then
                 self.segments += 1
                 self.spawn_counter = 0
 
@@ -148,7 +148,7 @@ function vine:update(hero)
             hero.pos.y = self.pos.y
         end
 
-        if self.release_counter > self.release_freq then
+        if self.release_counter > self.RELEASE_FREQ then
             self.release_counter = 0
             self.segments -= 1
         else

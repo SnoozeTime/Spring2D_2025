@@ -57,8 +57,6 @@ function hero:colcirc()
 end
 
 function hero:update(enemies)
-
-
   if self.state == "player_control" then
     self.moving_anim:update()
     self.idle_anim:update()
