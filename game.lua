@@ -37,7 +37,7 @@ function game_init()
   spores = {}
 
   roses = {}
-  for i=1,1 do
+  for i=1,3 do
     add(roses, rose:new{
       pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
     })
@@ -90,6 +90,12 @@ function game_update()
     local new_shroom = spores[i]:update()
     if new_shroom then
       if shroom_grid:empty(new_shroom.pos) then
+        for ri=1,#roses do
+          -- Kill any roses in this square.
+          if shroom_grid:key(new_shroom.pos) == shroom_grid:key(roses[ri]:center()) then
+            roses[ri]:wither()
+          end
+        end
         shroom_grid:insert(new_shroom.pos, new_shroom)
       end
       add(dead_spores,i)
