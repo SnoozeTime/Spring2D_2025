@@ -35,7 +35,8 @@ function menu_update()
     end
 
     text:update()
-    if (btnp(❎)) then game_init() end
+
+    if (btnp(❎)) then game_init(LEVELS[1]) end
 end
 
 

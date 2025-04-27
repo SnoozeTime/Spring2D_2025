@@ -1,3 +1,9 @@
+
+LEVELS = {
+  {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={{0,64},{128,64}}}
+}
+
+
 function level_switch_init()
     _update = level_switch_update
     _draw = level_switch_draw

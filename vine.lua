@@ -78,7 +78,7 @@ function vine:reiinit()
 end
 
 
-function vine:update(hero)
+function vine:update(hero, env)
     self.anim:update()
 
     if self.state == "walking" then 
@@ -86,6 +86,12 @@ function vine:update(hero)
         if self.walk_counter > self.current_walk_frames then
             self.state = "shooting"
         else
+
+            -- check whether would cross the river.
+            if env:in_river(self.pos.x + self.dir.x*self.SPEED, self.pos.y + self.dir.y*self.SPEED, self.SIZE/2) then
+                self.dir.x *= -1
+                self.dir.y *= -1
+            end
 
             self.pos.x += self.dir.x*self.SPEED
             self.pos.y += self.dir.y*self.SPEED
