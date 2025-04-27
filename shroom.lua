@@ -130,10 +130,11 @@ function spore:new(o)
   o.pos = {x = o.start.x, y = o.start.y}
   local normal
   local len
-  normal, len = math.normalize({x=o.rose.pos.x - o.pos.x, y = o.rose.pos.y - o.pos.y})
+  local target_pos = o.rose:center()
+  normal, len = math.normalize({x=target_pos.x - o.pos.x, y = target_pos.y - o.pos.y})
   -- If we're close enough, attack directly.
   if len < self.ATTACK_DISTANCE then
-    o.target = {x = o.rose.pos.x, y = o.rose.pos.y}
+    o.target = target_pos
     o.target_acquired = true
   else
     -- Attack as far as we can
@@ -163,9 +164,6 @@ function spore:update()
   self.anim:update()
 
   if self.t >= self.FLOAT_FRAMES then
-    if self.target_acquired then
-      self.rose:wither()
-    end
     -- plant shroom
     return shroom:new{
       pos = {x = self.pos.x, y = self.pos.y},

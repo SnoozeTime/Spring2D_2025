@@ -13,13 +13,19 @@ function rose:new(o)
     trans_color = 5,
     frame = 1,
     frame_length = 10,
-    -- Only one frame.
     frames = {64,66,68},
     w = 2,
     h = 2,
     loop = true,
   }
   return o
+end
+
+function rose:center()
+  return {
+    x = self.pos.x + self.anim.w * 8 / 2,
+    y = self.pos.y + self.anim.h * 8 / 2,
+  }
 end
 
 function rose:wither()
