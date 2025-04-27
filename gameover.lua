@@ -1,4 +1,5 @@
 function gameover_init()
+  music(20)
   local state = {
     top_text = bubbletext("game over!", {x=48, y=80}),
     bottom_text = bubbletext("press x/o to restart", {x=26, y=104}),
