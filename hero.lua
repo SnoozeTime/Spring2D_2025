@@ -1,12 +1,14 @@
 hero = {
   WALKSPEED = 2,
   SIZE = 8,
+  DROWN_DURATION=40,
 }
 
 function hero:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
+  o.initial_pos = {x=o.pos.x, y=o.pos.y}
   o.btn = btn()
   o.lastbtn = o.btn
   o.vel = {x = 0, y = 0}
@@ -21,6 +23,7 @@ function hero:new(o)
     h = 1,
     loop = true,
   }
+  o.drown_counter = 0
   o.state = "player_control"
   o.idle_anim = anim:new{
     t = 0,
@@ -65,7 +68,7 @@ function hero:colcirc()
   }
 end
 
-function hero:update(shroom_grid, vines)
+function hero:update(shroom_grid, vines, env)
   if self.state == "player_control" then
     self.moving_anim:update()
     self.idle_anim:update()
@@ -173,11 +176,28 @@ function hero:update(shroom_grid, vines)
 
     end
 
+
+    -- did you fall in the river ? 
+    if env:in_river(self.pos.x, self.pos.y, self.SIZE) then
+      self.state = "drowning"
+    end
+
+
   elseif self.state == "caught_by_vine" then
     -- State when not in control
     self.vine_catch_anim:update()
 
+  elseif self.state == "drowning" then
+    self.vine_catch_anim:update()
+
+    self.drown_counter += 1
+    if self.drown_counter > self.DROWN_DURATION then
+      self.drown_counter = 0
+      self.pos = {x=self.initial_pos.x, y=self.initial_pos.y}
+      self.state = "player_control"
+    end
   end
+
 end
 
 function hero:vine_catch()
@@ -200,7 +220,7 @@ function hero:draw()
     if self.blade then
       self.blade:draw(self.pos.x + (self.facing < 0 and -8 or 8), self.pos.y, self.facing < 0)
     end
-  elseif self.state == "caught_by_vine" then
+  elseif self.state == "caught_by_vine" or "drowning" then
     self.vine_catch_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
   end
 end

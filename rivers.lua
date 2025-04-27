@@ -48,15 +48,32 @@ end
 
 
 function river:in_river(x, y, r)
+
+    colliding = false
+
     for i=1,#self.sprites do
-        local ray = {x = self.sprites[i].pos.x - x, y = self.sprites[i].pos.y - y}
-        local distance = sqrt(ray.x*ray.x + ray.y*ray.y)
-        if distance < 8 + r then
-            return true
+
+
+        local v = {x = x - self.sprites[i].pos.x, y = y - self.sprites[i].pos.y}
+        local distance = sqrt(v.x* v.x + v.y * v.y)
+        if distance < 6 then
+            colliding = true
+            break
         end
+
     end
 
-    return false
+    -- exception for the bridge.
+    for i=1,#self.bridges do
+        local v = {x = x - self.bridges[i].pos.x, y = y - self.bridges[i].pos.y}
+        local distance = sqrt(v.x* v.x + v.y * v.y)
+        if distance < 8 then
+            colliding = false
+            break
+        end
+    end 
+
+    return colliding
 end
 
 

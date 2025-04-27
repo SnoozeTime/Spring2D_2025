@@ -86,7 +86,7 @@ end
 
 function game_update()
   env:update()
-  ninja:update(shroom_grid, vines)
+  ninja:update(shroom_grid, vines, env)
   local dead_vines = {}
   for id,shroom in pairs(shroom_grid.grid) do
     local message = shroom:update(roses)
