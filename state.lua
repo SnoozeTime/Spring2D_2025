@@ -7,6 +7,7 @@ function menu_init()
 
     
     music(12)
+    text = bubbletext("press x/o to start the game", {x=10, y=108})
     -- let's draw a bunch of mushrooms
     shrooms = {}
     for i=1,10 do
@@ -33,6 +34,7 @@ function menu_update()
         shrooms[i].anim:update()
     end
 
+    text:update()
     if (btnp(❎)) then game_init() end
 end
 
@@ -57,7 +59,7 @@ function menu_draw()
     sx, sy = (sp % 16) * 8, (sp \ 16) * 8
     sspr(sx, sy, 8*5, 8*3, 25, 60, 8*5*2, 8*3*2)
     --spr(128, 56, 50, 5, 3)
-    print("Press x/o to start the game", 10, 104)
+    text:draw()
 end
 
 -- State for the main game
