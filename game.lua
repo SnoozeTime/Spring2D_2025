@@ -112,7 +112,7 @@ function game_update()
     gameover_init()
   end
   if next(shroom_grid.grid) == nil and #spores <= 0 and #vines <= 0 then
-    win_init()
+    level_switch_init()
   end
 
   -- Update the vines

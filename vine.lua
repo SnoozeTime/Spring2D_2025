@@ -124,6 +124,8 @@ function vine:update(hero)
                 collided = true
                 self.caught_hero = true
                 hero:vine_catch()
+                
+                sfx(2)
             end
         end
 
@@ -161,6 +163,7 @@ function vine:update(hero)
 
             if self.caught_hero then
                 hero:vine_release()
+                sfx(2, -2)
             end
 
             -- reinitialize the walking state
