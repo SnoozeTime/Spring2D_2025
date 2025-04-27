@@ -1,8 +1,9 @@
-function win_init()
+function win_init(alive, total)
   music(17)
   local state = {
-    top_text = bubbletext("you win!", {x=52, y=60}),
-    bottom_text = bubbletext("press x/o to restart.", {x=26, y=84}),
+    top_text = bubbletext("you win!", {x=nil, y=60}),
+    bottom_text = bubbletext("press x/o to restart.", {x=nil, y=84}),
+    flower_score = flower_score:new{alive = alive, total = total, y_pos = 32},
   }
 
   _update = function() win_update(state) end
@@ -13,6 +14,7 @@ function win_update(state)
   if (btnp(❎)) then menu_init() end
   state.top_text:update()
   state.bottom_text:update()
+  state.flower_score:update()
 end
 
 function win_draw(state)
@@ -20,4 +22,5 @@ function win_draw(state)
   color(7)
   state.top_text:draw()
   state.bottom_text:draw()
+  state.flower_score:draw()
 end
