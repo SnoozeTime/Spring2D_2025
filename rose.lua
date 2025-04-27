@@ -39,6 +39,7 @@ end
 
 function rose:wither()
   if not self.withering then
+    sfx(4)
     self.withering = true
     self.anim = anim:new{
       t = 0,

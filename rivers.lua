@@ -16,7 +16,7 @@ function river:new(o)
     -- easy start - go from middle of screen- left to right
     for i=o.river_start[1], 124, 8 do
 
-        if i != o.bridge[1] then
+        if i != o.bridge[1] and i != o.bridge[2] then
             add(o.sprites, { pos = {x = i, y = 64}, anim = anim:new{
                 t = 0,
                 trans_color = 5,
