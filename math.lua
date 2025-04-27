@@ -8,3 +8,7 @@ function math.normalize(vec)
   return {x = vec.x/len, y = vec.y/len}, len
 end
 
+function math.perturb(normal, variance)
+  local new_angle = atan2(normal.x, normal.y) + rnd(variance) - variance/2
+  return {x = cos(new_angle), y = sin(new_angle)}
+end

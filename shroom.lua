@@ -124,10 +124,10 @@ function spore:new(o)
     o.target_acquired = true
   else
     -- Attack as far as we can
-    -- TODO: randomize this a bit
+    local perturbed = math.perturb(normal, 0.2)
     o.target = {
-      x = o.pos.x + normal.x * self.ATTACK_DISTANCE,
-      y = o.pos.y + normal.y * self.ATTACK_DISTANCE,
+      x = o.pos.x + perturbed.x * self.ATTACK_DISTANCE,
+      y = o.pos.y + perturbed.y * self.ATTACK_DISTANCE,
     }
     o.target_acquired = false
   end

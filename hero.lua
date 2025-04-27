@@ -1,5 +1,3 @@
-
-
 hero = {
   WALKSPEED = 2,
   SIZE = 8,
@@ -183,6 +181,7 @@ function hero:update(enemies, vines)
 end
 
 function hero:vine_catch()
+  -- TODO: Maybe need to prevent re-catch?
   self.state = "caught_by_vine"
 end
 

@@ -12,7 +12,7 @@ function game_init()
 
   music(0)
 
-  hero = hero:new{
+  ninja = hero:new{
            pos = {x = flr(rnd(120)), y = flr(rnd(120))},
            bounds = {w = 128, h = 128},
          }
@@ -57,11 +57,11 @@ function game_draw()
   for i=1,#vines do
     vines[i]:draw()
   end
-  hero:draw()
+  ninja:draw()
 end
 
 function game_update()
-  hero:update(shrooms, vines)
+  ninja:update(shrooms, vines)
   local dead_shrooms = {}
   local dead_vines = {}
   for i=1,#shrooms do
@@ -108,7 +108,7 @@ function game_update()
   -- Update the vines
   --------------------
   for i=1,#vines do
-    local message = vines[i]:update(hero)
+    local message = vines[i]:update(ninja)
     if message then
       if message.id == vine.REMOVE then
         add(dead_vines, i)
