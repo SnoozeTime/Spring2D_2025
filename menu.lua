@@ -6,7 +6,7 @@ function menu_init()
       t = 0,
       text = bubbletext("press x/o to start the game", {x=nil, y=108}),
       plea = textbox:new{text = "save us! plz"},
-      flower = rose:new{pos = {x = 12, y = 57}},
+      flower = rose:new{pos = {x = 12, y = 45}},
     }
     -- let's draw a bunch of mushrooms
     state.shrooms = {}
@@ -58,7 +58,9 @@ function menu_draw(state)
         state.shrooms[i].anim:draw(state.shrooms[i].pos.x, state.shrooms[i].pos.y, state.shrooms[i].pos.x > 64, false)
     end
 
-    state.plea:draw({x = 18, y = 56})
+    local delta = -16
+
+    state.plea:draw({x = 18, y = 44})
     state.flower:draw()
 
     color(0)
@@ -67,12 +69,13 @@ function menu_draw(state)
 
     sp = 128
     sx, sy = (sp % 16) * 8, (sp \ 16) * 8
-    sspr(sx, sy, 8*5, 8*3, 25, 55 + 5*sin(state.t/100), 8*5*2, 8*3*2)
+    sspr(sx, sy, 8*5, 8*3, 25, 43 + 5*sin(state.t/100), 8*5*2, 8*3*2)
     --spr(128, 56, 50, 5, 3)
     state.text:draw()
 
-    printbg("by snoozetime", 72, 4, 3, 11)
-    printbg("   and acedio", 72, 12, 3, 11)
+    printbg("by snoozetime", 72, 4, 11, 3)
+    printbg("   and acedio", 72, 12, 11, 3)
+    printbg("for s2dgj '25", 72, 20, 11, 3)
 end
 
 -- State for the main game

@@ -1,4 +1,6 @@
 function gameover_init(alive, total)
+  -- HACK: stop the slurping noise
+  sfx(2, -2)
   music(20)
   local state = {
     top_text = bubbletext("game over!", {x=nil, y=80}),
