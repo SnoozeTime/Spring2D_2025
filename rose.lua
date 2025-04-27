@@ -30,6 +30,13 @@ function rose:center()
   }
 end
 
+function rose:base()
+  return {
+    x = self.pos.x + self.anim.w * 8 / 2,
+    y = self.pos.y + self.anim.h * 8,
+  }
+end
+
 function rose:wither()
   if not self.withering then
     self.withering = true

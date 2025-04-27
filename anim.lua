@@ -21,7 +21,7 @@ function anim:update()
 end
 
 function anim:done()
-  return self.loop or self.frame >= #self.frames and self.t > self.frame_length
+  return not self.loop and self.frame >= #self.frames and self.t > self.frame_length
 end
 
 function anim:draw(x, y, flip_x, flip_y)

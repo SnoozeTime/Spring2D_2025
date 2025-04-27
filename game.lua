@@ -7,7 +7,7 @@ function game_init(level_index)
   local state = {
     LEVELS = {
       {mushrooms=1, roses=3, start_pos={5,5}, vines=1, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
-      {mushrooms=3, roses=1, start_pos={5,5}, vines=2, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
+      {mushrooms=3, roses=3, start_pos={5,5}, vines=2, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
     },
   }
 
@@ -36,10 +36,15 @@ function game_init(level_index)
 
   state.roses = {}
   for i=1,level_desc.roses do
-    local r = rose:new{
-      pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
-    }
-    add(state.roses, r)
+    while true do
+      local r = rose:new{
+        pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
+      }
+      if not close_to_roses(state.roses, r.pos) and not state.env:in_river(r:base().x, r:base().y, 8) then
+        add(state.roses, r)
+        break
+      end
+    end
   end
 
   for i=1,level_desc.mushrooms do
@@ -141,7 +146,7 @@ function game_update(state)
   end
   local dead_roses = {}
   for i=1,#state.roses do
-    if not state.roses[i]:update() then
+    if state.roses[i]:update() then
       add(dead_roses, i)
     end
   end
