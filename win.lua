@@ -1,4 +1,5 @@
 function win_init()
+  music(17)
   local state = {
     top_text = bubbletext("you win!", {x=52, y=60}),
     bottom_text = bubbletext("press x/o to restart.", {x=26, y=84}),
