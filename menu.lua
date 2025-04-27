@@ -3,8 +3,6 @@
 function menu_init()
     _update = menu_update
     _draw = menu_draw
-
-
     
     music(12)
     text = bubbletext("press x/o to start the game", {x=10, y=108})
