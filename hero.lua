@@ -178,8 +178,9 @@ function hero:update(shroom_grid, vines, env)
 
 
     -- did you fall in the river ? 
-    if env:in_river(self.pos.x, self.pos.y, self.SIZE) then
+    if env:in_river(self.pos.x, self.pos.y, 0) then
       self.state = "drowning"
+      sfx(3)
     end
 
 
