@@ -1,6 +1,9 @@
 -- Create with this function, then add update() and draw() to the respetive
--- sections.
+-- sections. Set pos.x to nil to center.
 function bubbletext(text, pos)
+  if pos.x == nil then
+    pos.x = 128/2 - 2*#text
+  end
   return {
     t=0,
     pos=pos,

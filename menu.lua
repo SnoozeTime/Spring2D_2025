@@ -4,7 +4,7 @@ function menu_init()
     music(12)
     local state = {
       t = 0,
-      text = bubbletext("press x/o to start the game", {x=10, y=108}),
+      text = bubbletext("press x/o to start the game", {x=nil, y=108}),
     }
     -- let's draw a bunch of mushrooms
     state.shrooms = {}
