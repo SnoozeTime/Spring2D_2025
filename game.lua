@@ -61,8 +61,9 @@ function game_draw()
 end
 
 function game_update()
-  ninja:update(shrooms)
+  ninja:update(shrooms, vines)
   local dead_shrooms = {}
+  local dead_vines = {}
   for i=1,#shrooms do
     local message = shrooms[i]:update(roses)
     if message then
@@ -100,11 +101,23 @@ function game_update()
   if #roses <= 0 then
     gameover_init()
   end
-  if #spores <= 0 and #shrooms <= 0 then
+  if #spores <= 0 and #shrooms <= 0 and #vines <= 0 then
     win_init()
   end
 
+  -- Update the vines
+  --------------------
   for i=1,#vines do
-    vines[i]:update(ninja)
+    local message = vines[i]:update(ninja)
+    if message then
+      if message.id == vine.REMOVE then
+        add(dead_vines, i)
+      end
+    end
+  end
+
+  -- clean up dead vines
+  for i=#dead_vines,1,-1 do
+    deli(vines,dead_vines[i])
   end
 end

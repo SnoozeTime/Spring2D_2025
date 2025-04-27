@@ -6,7 +6,10 @@ vine = {
     SPAWN_FREQ = 20,
     RELEASE_FREQ = 10,
     MAX_SEGMENTS = 10,
-    MIN_SEGMENT = 3
+    MIN_SEGMENT = 3,
+    SIZE = 8,
+    DEATH_FRICTION = 0.8,
+    DEATH_SPEED = 5,
 }
 
 function vine:new(o)
@@ -88,11 +91,11 @@ function vine:update(hero)
             self.pos.y += self.dir.y*self.SPEED
         
             -- if there is a risk of going off screen, just change the direction
-            if (self.pos.x < 8 and self.dir.x < 0) or (self.pos.x > 120 and self.dir.x > 0) then
+            if (self.pos.x < self.SIZE and self.dir.x < 0) or (self.pos.x > 120 and self.dir.x > 0) then
                 self.dir.x *= -1
             end
 
-            if (self.pos.y < 8 and self.dir.y < 0) or (self.pos.y > 120 and self.dir.y > 0) then
+            if (self.pos.y < self.SIZE and self.dir.y < 0) or (self.pos.y > 120 and self.dir.y > 0) then
                 self.dir.y *= -1
             end
         
@@ -109,9 +112,9 @@ function vine:update(hero)
         local collided = false
         if self.segments > 0 and hero.state == "player_control" then
             local colcirc = {
-                x = self.pos.x + self.segments * 8 * sgn(self.dir.x),
+                x = self.pos.x + self.segments * self.SIZE * sgn(self.dir.x),
                 y = self.pos.y,
-                r = 8,
+                r = self.SIZE,
             }
 
             local hero_col = hero:colcirc()
@@ -123,8 +126,6 @@ function vine:update(hero)
                 hero:vine_catch()
             end
         end
-            
-        
 
         -- then add a segment if no collision
         if not collided then
@@ -144,7 +145,7 @@ function vine:update(hero)
 
         -- if hero was caught, update its position to the tip of the vine
         if hero.state == "caught_by_vine" and self.caught_hero then
-            hero.pos.x = self.pos.x + self.segments * 8 * sgn(self.dir.x)
+            hero.pos.x = self.pos.x + self.segments * self.SIZE * sgn(self.dir.x)
             hero.pos.y = self.pos.y
         end
 
@@ -166,16 +167,75 @@ function vine:update(hero)
             self:reiinit()
         end
 
+    elseif self.state == "prepare_to_die" then
 
+
+        self.pos.x += self.dir.x
+        self.pos.y += self.dir.y
+        self.dir.x *= self.DEATH_FRICTION
+        self.dir.y *= self.DEATH_FRICTION
+
+        -- retract the tongue before dying.
+        if self.segments > 0 then
+            self.segments -= 1
+        else
+            self.state = "dead"
+        end
+    elseif self.state == "dead" then 
+        self.pos.x += self.dir.x
+        self.pos.y += self.dir.y
+        self.dir.x *= self.DEATH_FRICTION
+        self.dir.y *= self.DEATH_FRICTION
+
+        
+        return self.anim:done() and { id = vine.REMOVE } or nil
     end
 
+
+    return nil
+
+end
+
+function vine:colcirc()
+    -- return body and end of vine collision circles
+    if self.state == "prepare_to_die" or self.state == "dead" then
+      return nil, nil
+    end
+  
+    return {
+      x = self.pos.x + self.SIZE / 2,
+      y = self.pos.y + self.SIZE / 2,
+      r = self.SIZE / 2,
+    }, {
+        x = self.pos.x + self.SIZE / 2 + self.segments * self.SIZE * sgn(self.dir.x),
+        y = self.pos.y + self.SIZE / 2,
+        r = self.SIZE / 2,
+      }
+end
+
+function vine:collide(collision)
+
+    if self.state != "prepare_to_die" and self.state != "dead" then
+        self.state = "prepare_to_die"
+        sfx(0)
+        self.dir = {x = collision.x*self.DEATH_SPEED, y = collision.y*self.DEATH_SPEED}
+        self.anim = anim:new{
+            t = 0,
+            trans_color = 6,
+            frame = 1,
+            frame_length = 0,
+            frames = {39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0,39,0},
+            w = 1,
+            h = 1,
+            loop = false,
+          }
+    end
 end
 
 
 function vine:draw()
-    if self.state == "walking" then 
-        self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
-    else
+    if self.state == "attracting" or self.state == "shooting" or self.state == "prepare_to_die" then 
+
         self.shooting_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
         for n=1,self.segments do
             local frame
@@ -187,20 +247,21 @@ function vine:draw()
             palt()
             palt(0, false)
             palt(6, true)
-            spr(frame, self.pos.x + n * 8 * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
+            spr(frame, self.pos.x + n * self.SIZE * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
             --self.draw_segment(i)
         end
+    else
+        self.anim:draw(self.pos.x, self.pos.y, self.facing < 0)
     end
+
 end
 
 
 function vine:draw_segment(n)
 
-    
-
     palt()
     palt(0, false)
     palt(6, true)
-    spr(50, self.pos.x + n * 8 * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
+    spr(50, self.pos.x + n * self.SIZE * sgn(self.dir.x), self.pos.y, 1,1, self.facing < 0, false)
 end
   

@@ -65,7 +65,7 @@ function hero:colcirc()
   }
 end
 
-function hero:update(enemies)
+function hero:update(enemies, vines)
   if self.state == "player_control" then
     self.moving_anim:update()
     self.idle_anim:update()
@@ -140,6 +140,7 @@ function hero:update(enemies)
         r = 8,
       }
 
+      -- shrooms collision
       for i=1,#enemies do
         local enemy_col = enemies[i]:colcirc()
         if enemy_col then
@@ -149,6 +150,27 @@ function hero:update(enemies)
           end
         end
       end
+
+      -- vines collision
+      for i=1,#vines do 
+        local body_col, head_col = vines[i]:colcirc()
+        if body_col then
+          local col = collision.circcirc(colcirc, body_col)
+          if col then
+            vines[i]:collide(col)
+          end
+        end
+
+        if head_col then
+          local col = collision.circcirc(colcirc, head_col)
+          if col then
+            vines[i]:collide(col)
+          end
+        end
+
+
+      end
+
     end
 
   elseif self.state == "caught_by_vine" then
