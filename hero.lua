@@ -65,7 +65,7 @@ function hero:colcirc()
   }
 end
 
-function hero:update(enemies, vines)
+function hero:update(shroom_grid, vines)
   if self.state == "player_control" then
     self.moving_anim:update()
     self.idle_anim:update()
@@ -141,12 +141,12 @@ function hero:update(enemies, vines)
       }
 
       -- shrooms collision
-      for i=1,#enemies do
-        local enemy_col = enemies[i]:colcirc()
+      for id,shroom in pairs(shroom_grid.grid) do
+        local enemy_col = shroom:colcirc()
         if enemy_col then
           local col = collision.circcirc(colcirc, enemy_col)
           if col then
-            enemies[i]:collide(col)
+            shroom:collide(col)
           end
         end
       end
