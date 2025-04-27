@@ -6,6 +6,8 @@ vine = {
     speed = 0.4,
     spawn_freq = 20,
     spawn_counter = 0,
+    release_freq = 10,
+    release_counter = 0,
     MAX_SEGMENTS = 10,
     MIN_SEGMENT = 3
 }
@@ -52,7 +54,26 @@ function vine:new(o)
     return o
 end
 
-function vine:update()
+function vine:reiinit()
+
+    -- this is for walking state
+    local normal
+    local len
+    dir, len = math.normalize({x=flr(rnd(120))- self.pos.x, y=flr(rnd(120))-self.pos.y})
+    self.dir = dir
+    self.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
+    self.walk_counter = 0
+
+    -- this is for shooting state
+    self.segments = 0
+    self.spawn_counter = 0
+
+    -- release state
+    self.release_counter = 0
+end
+
+
+function vine:update(hero)
     self.anim:update()
 
     if self.state == "walking" then 
@@ -81,29 +102,62 @@ function vine:update()
         self.walk_counter += 1
     elseif self.state == "shooting" then
 
-        if self.spawn_counter > self.spawn_freq then
-            self.segments += 1
-            self.spawn_counter = 0
 
-            if self.segments > self.segment_count then
+        -- first check collision with the hero
+        local collided = false
+        if self.segments > 0 then
+            local colcirc = {
+                x = self.pos.x + self.segments * 8 * sgn(self.dir.x),
+                y = self.pos.y,
+                r = 8,
+            }
+
+            local hero_col = hero:colcirc()
+            local col = collision.circcirc(colcirc, hero_col)
+            if col then
                 self.state = "attracting"
+                collided = true
+                hero:vine_catch()
             end
-        else
-            self.spawn_counter += 1
+        end
+            
+        
+
+        -- then add a segment if no collision
+        if not collided then
+            if self.spawn_counter > self.spawn_freq then
+                self.segments += 1
+                self.spawn_counter = 0
+
+                if self.segments > self.segment_count then
+                    self.state = "attracting"
+                end
+            else
+                self.spawn_counter += 1
+            end
         end
     elseif self.state == "attracting" then
 
-        self.segments -= 1
+
+        -- if hero was caught, update its position to the tip of the vine
+        if hero.state == "caught_by_vine" then
+            hero.pos.x = self.pos.x + self.segments * 8 * sgn(self.dir.x)
+            hero.pos.y = self.pos.y
+        end
+
+        if self.release_counter > self.release_freq then
+            self.release_counter = 0
+            self.segments -= 1
+        else
+            self.release_counter += 1
+        end
 
         if self.segments == 0 then
             self.state = "walking"
+            hero:vine_release()
 
             -- reinitialize the walking state
-            local normal
-            local len
-            dir, len = math.normalize({x=flr(rnd(120))- self.pos.x, y=flr(rnd(120))-self.pos.y})
-            self.dir = dir
-            self.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
+            self:reiinit()
         end
 
 

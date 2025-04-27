@@ -105,6 +105,6 @@ function game_update()
   end
 
   for i=1,#vines do
-    vines[i]:update()
+    vines[i]:update(hero)
   end
 end

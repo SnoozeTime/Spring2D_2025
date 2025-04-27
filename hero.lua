@@ -1,6 +1,9 @@
+
+
 hero = {
   WALKSPEED = 2,
   SIZE = 8,
+  state = "player_control"
 }
 
 function hero:new(o)
@@ -45,89 +48,114 @@ function hero:held(btni)
   return self.btn & btnmask == btnmask
 end
 
+function hero:colcirc()
+  return {
+    x = self.pos.x + self.SIZE / 2,
+    y = self.pos.y + self.SIZE / 2,
+    r = self.SIZE / 2,
+  }
+end
+
 function hero:update(enemies)
-  self.moving_anim:update()
-  self.idle_anim:update()
 
-  self.lastbtn = self.btn
-  self.btn = btn()
 
-  local lr = 0
-  if self:held(0) then
-    lr -= 1
-  end
-  if self:held(1) then
-    lr += 1
-  end
-  local ud = 0
-  if self:held(2) then
-    ud -= 1
-  elseif self:held(3) then
-    ud += 1
-  end
+  if self.state == "player_control" then
+    self.moving_anim:update()
+    self.idle_anim:update()
 
-  if lr != 0 then
-    self.facing = lr
-  end
+    self.lastbtn = self.btn
+    self.btn = btn()
 
-  local walkspeed = self.WALKSPEED
-  if lr != 0 and ud != 0 then
-    walkspeed /= sqrt(2)
-  end
-  self.vel.x = lr * walkspeed
-  self.vel.y = ud * walkspeed
-
-  self.pos.x += self.vel.x
-  if self.pos.x < 0 then
-    self.pos.x = 0
-  elseif self.pos.x + self.SIZE >= self.bounds.w then
-    self.pos.x = self.bounds.w - self.SIZE - 1
-  end
-
-  self.pos.y += self.vel.y
-  if self.pos.y < 0 then
-    self.pos.y = 0
-  elseif self.pos.y + self.SIZE >= self.bounds.h then
-    self.pos.y = self.bounds.h - self.SIZE - 1
-  end
-
-  if self.blade then
-    self.blade:update()
-    if self.blade:done() then
-      self.blade = nil
+    local lr = 0
+    if self:held(0) then
+      lr -= 1
     end
-  end
+    if self:held(1) then
+      lr += 1
+    end
+    local ud = 0
+    if self:held(2) then
+      ud -= 1
+    elseif self:held(3) then
+      ud += 1
+    end
 
-  if self:pressed(4) then
-    self.blade = anim:new{
-      t = 0,
-      trans_color = 6,
-      frame = 1,
-      frame_length = 0,
-      frames = {35,36,37,38},
-      w = 1,
-      h = 1,
-      loop = false,
-    }
-  end
+    if lr != 0 then
+      self.facing = lr
+    end
 
-  if self.blade then
-    local colcirc = {
-      x = self.pos.x + 4 + (self.facing > 0 and 4 or -4),
-      y = self.pos.y + 4,
-      r = 8,
-    }
+    local walkspeed = self.WALKSPEED
+    if lr != 0 and ud != 0 then
+      walkspeed /= sqrt(2)
+    end
+    self.vel.x = lr * walkspeed
+    self.vel.y = ud * walkspeed
 
-    for i=1,#enemies do
-      local enemy_col = enemies[i]:colcirc()
-      if enemy_col then
-        local col = collision.circcirc(colcirc, enemy_col)
-        if col then
-          enemies[i]:collide(col)
+    self.pos.x += self.vel.x
+    if self.pos.x < 0 then
+      self.pos.x = 0
+    elseif self.pos.x + self.SIZE >= self.bounds.w then
+      self.pos.x = self.bounds.w - self.SIZE - 1
+    end
+
+    self.pos.y += self.vel.y
+    if self.pos.y < 0 then
+      self.pos.y = 0
+    elseif self.pos.y + self.SIZE >= self.bounds.h then
+      self.pos.y = self.bounds.h - self.SIZE - 1
+    end
+
+    if self.blade then
+      self.blade:update()
+      if self.blade:done() then
+        self.blade = nil
+      end
+    end
+
+    if self:pressed(4) then
+      self.blade = anim:new{
+        t = 0,
+        trans_color = 6,
+        frame = 1,
+        frame_length = 0,
+        frames = {35,36,37,38},
+        w = 1,
+        h = 1,
+        loop = false,
+      }
+    end
+
+    if self.blade then
+      local colcirc = {
+        x = self.pos.x + 4 + (self.facing > 0 and 4 or -4),
+        y = self.pos.y + 4,
+        r = 8,
+      }
+
+      for i=1,#enemies do
+        local enemy_col = enemies[i]:colcirc()
+        if enemy_col then
+          local col = collision.circcirc(colcirc, enemy_col)
+          if col then
+            enemies[i]:collide(col)
+          end
         end
       end
     end
+
+  else
+    -- State when not in control
+    -- TODO add animation when caught.
+
   end
+end
+
+function hero:vine_catch()
+  self.state = "caught_by_vine"
+end
+
+function hero:vine_release()
+  self.state = "player_control"
 end
 
 function hero:draw()
@@ -139,4 +167,6 @@ function hero:draw()
   if self.blade then
     self.blade:draw(self.pos.x + (self.facing < 0 and -8 or 8), self.pos.y, self.facing < 0)
   end
+
+  -- TODO print caught animation
 end
