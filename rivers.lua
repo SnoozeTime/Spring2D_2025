@@ -49,7 +49,7 @@ end
 
 function river:in_river(x, y, river_margin)
 
-    colliding = false
+    local colliding = false
 
     for i=1,#self.sprites do
 
