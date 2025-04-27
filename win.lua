@@ -12,6 +12,7 @@ function win_init(alive, total)
 end
 
 function win_update(state)
+  state.t += 1
   if state.t > 15 and (btnp(4) or btnp(5)) then menu_init() end
   state.top_text:update()
   state.bottom_text:update()
