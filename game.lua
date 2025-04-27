@@ -13,7 +13,8 @@ function game_init()
   music(0)
 
   shroom_grid = grid:new{
-           bounds = {w = 128, h = 128},
+           -- 120 so we don't place shrooms just outside the bottom of the map
+           bounds = {w = 120, h = 120},
            divisions = 10,
          }
 

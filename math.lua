@@ -11,7 +11,7 @@ end
 -- Changes the normal randomly, with a preference to tend towards the original
 -- direction.
 function math.perturb(normal)
-  local r = rnd(1)
+  local r = rnd(2) - 1
   local new_angle = atan2(normal.x, normal.y) + r*r*r/2
   return {x = cos(new_angle), y = sin(new_angle)}
 end
