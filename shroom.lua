@@ -53,18 +53,21 @@ function shroom:colcirc()
 end
 
 function shroom:collide(collision)
-  self.alive = false
-  self.anim = anim:new{
-    t = 0,
-    trans_color = 6,
-    frame = 1,
-    frame_length = 0,
-    frames = {5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0},
-    w = 1,
-    h = 1,
-    loop = false,
-  }
-  self.vel = {x = collision.x*self.DEATH_SPEED, y = collision.y*self.DEATH_SPEED}
+  if self.alive then
+    self.alive = false
+    sfx(0)
+    self.anim = anim:new{
+      t = 0,
+      trans_color = 6,
+      frame = 1,
+      frame_length = 0,
+      frames = {5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0},
+      w = 1,
+      h = 1,
+      loop = false,
+    }
+    self.vel = {x = collision.x*self.DEATH_SPEED, y = collision.y*self.DEATH_SPEED}
+  end
 end
 
 -- return messages {id,...}

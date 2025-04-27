@@ -3,7 +3,6 @@
 hero = {
   WALKSPEED = 2,
   SIZE = 8,
-  state = "player_control"
 }
 
 function hero:new(o)
@@ -24,6 +23,7 @@ function hero:new(o)
     h = 1,
     loop = true,
   }
+  o.state = "player_control"
   o.idle_anim = anim:new{
     t = 0,
     trans_color = 6,
@@ -112,7 +112,8 @@ function hero:update(enemies)
       end
     end
 
-    if self:pressed(4) then
+    if self:pressed(4) and not self.blade then
+      sfx(1)
       self.blade = anim:new{
         t = 0,
         trans_color = 6,
