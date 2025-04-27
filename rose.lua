@@ -10,13 +10,13 @@ function rose:new(o)
   self.withering = false
   o.anim = anim:new{
     t = 0,
-    trans_color = 6,
+    trans_color = 5,
     frame = 1,
-    frame_length = 0,
+    frame_length = 10,
     -- Only one frame.
-    frames = {8},
-    w = 1,
-    h = 1,
+    frames = {64,66,68},
+    w = 2,
+    h = 2,
     loop = true,
   }
   return o
