@@ -3,6 +3,7 @@
 function menu_init()
     music(12)
     local state = {
+      t = 0,
       text = bubbletext("press x/o to start the game", {x=10, y=108}),
     }
     -- let's draw a bunch of mushrooms
@@ -33,6 +34,8 @@ function menu_update(state)
         state.shrooms[i].anim:update()
     end
 
+    state.t += 1
+
     state.text:update()
 
     -- start the first level
@@ -58,7 +61,7 @@ function menu_draw(state)
 
     sp = 128
     sx, sy = (sp % 16) * 8, (sp \ 16) * 8
-    sspr(sx, sy, 8*5, 8*3, 25, 60, 8*5*2, 8*3*2)
+    sspr(sx, sy, 8*5, 8*3, 25, 55 + 5*sin(state.t/100), 8*5*2, 8*3*2)
     --spr(128, 56, 50, 5, 3)
     state.text:draw()
 end
