@@ -4,9 +4,13 @@ function _init()
 end
 
 
-function game_init(level_desc)
-
-  printh(LEVELS)
+function game_init(level_index)
+  level = level_index
+  LEVELS = {
+    {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={{0,64},{128,64}}},
+    {mushrooms=3, roses=1, start_pos={5,5}, vines=2, river={{0,64},{128,64}}},
+  }
+  local level_desc = LEVELS[level_index]
 
   -- set the new callbacks
   _update = game_update
@@ -125,7 +129,11 @@ function game_update()
     gameover_init()
   end
   if next(shroom_grid.grid) == nil and #spores <= 0 and #vines <= 0 then
-    level_switch_init()
+    if level < #LEVELS then
+      level_switch_init(level + 1)
+    else
+      win_init()
+    end
   end
 
   -- Update the vines

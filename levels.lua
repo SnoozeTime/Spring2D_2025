@@ -1,24 +1,26 @@
 
-LEVELS = {
-  {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={{0,64},{128,64}}}
-}
+function level_switch_init(level_index)
+  _update = level_switch_update
+  _draw = level_switch_draw
 
+  level = level_index
 
-function level_switch_init()
-    _update = level_switch_update
-    _draw = level_switch_draw
+  top_text = bubbletext("level cleared!", {x=42, y=60})
+  bottom_text = bubbletext("press x/o to continue.", {x=26, y=84})
 
-    music(15)
-  end
+  music(15)
+end
   
 function level_switch_update()
-  if (btnp(❎)) then menu_init() end
+  if (btnp(4) or btnp(5)) then game_init(level) end
+  top_text:update()
+  bottom_text:update()
 end
 
 function level_switch_draw()
   cls(0)
   color(7)
-  print("Level cleared!", 52, 80)
-  print("Press x/o to continue", 26, 104)
+  top_text:draw()
+  bottom_text:draw()
 end
   
