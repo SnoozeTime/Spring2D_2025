@@ -21,7 +21,7 @@ function game_init(level_desc)
          }
 
   -- rivers etc
-  env = river:new{}
+  env = river:new{river_start=level_desc.river.river_start, river_end=level_desc.river.river_end, bridge=level_desc.river.bridge}
 
   ninja = hero:new{
            pos = {x = level_desc.start_pos[1], y = level_desc.start_pos[2]},
@@ -49,9 +49,17 @@ function game_init(level_desc)
   end
 
   vines = {}
-  for i=1,2 do 
+  for i=1,level_desc.vines do 
+
+    local vine_x = flr(rnd(120))
+    local vine_y = flr(rnd(120))
+
+    while env:in_river(vine_x, vine_y, vine.SIZE) do
+      vine_x = flr(rnd(120))
+      vine_y = flr(rnd(120))
+    end
     add(vines, vine:new {
-      pos = {x = flr(rnd(120)), y = flr(rnd(120))}}
+      pos = {x = vine_x, y = vine_y}}
     )
   end
 end

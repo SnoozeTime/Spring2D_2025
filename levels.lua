@@ -1,6 +1,6 @@
 
 LEVELS = {
-  {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={{0,64},{128,64}}}
+  {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={river_start={0,64},river_end={128,64}, bridge={64,64}}}
 }
 
 
