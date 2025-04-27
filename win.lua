@@ -1,6 +1,7 @@
 function win_init(alive, total)
   music(17)
   local state = {
+    t = 0,
     top_text = bubbletext("you win!", {x=nil, y=60}),
     bottom_text = bubbletext("press x/o to restart.", {x=nil, y=84}),
     flower_score = flower_score:new{alive = alive, total = total, y_pos = 32},
@@ -11,7 +12,7 @@ function win_init(alive, total)
 end
 
 function win_update(state)
-  if (btnp(❎)) then menu_init() end
+  if state.t > 15 and (btnp(4) or btnp(5)) then menu_init() end
   state.top_text:update()
   state.bottom_text:update()
   state.flower_score:update()

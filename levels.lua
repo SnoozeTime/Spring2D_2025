@@ -3,6 +3,7 @@ function level_switch_init(level_index, alive, total)
   music(15)
 
   local state = {
+    t = 0,
     level = level_index,
     top_text = bubbletext("level cleared!", {x=nil, y=60}),
     bottom_text = bubbletext("press x/o to continue.", {x=nil, y=84}),
@@ -14,7 +15,8 @@ function level_switch_init(level_index, alive, total)
 end
   
 function level_switch_update(state)
-  if (btnp(4) or btnp(5)) then game_init(state.level) end
+  state.t += 1
+  if state.t > 15 and (btnp(4) or btnp(5)) then game_init(state.level) end
   state.top_text:update()
   state.bottom_text:update()
   state.flower_score:update()

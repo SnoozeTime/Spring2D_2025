@@ -3,6 +3,7 @@ function gameover_init(alive, total)
   sfx(2, -2)
   music(20)
   local state = {
+    t = 0,
     top_text = bubbletext("game over!", {x=nil, y=80}),
     bottom_text = bubbletext("press x/o to restart", {x=nil, y=104}),
     flower_score = flower_score:new{alive = alive, total = total, y_pos = 32},
@@ -12,7 +13,8 @@ function gameover_init(alive, total)
 end
 
 function gameover_update(state)
-  if (btnp(4) or btnp(5)) then menu_init() end
+  state.t += 1
+  if state.t > 15 and (btnp(4) or btnp(5)) then menu_init() end
   state.top_text:update()
   state.bottom_text:update()
   state.flower_score:update()
