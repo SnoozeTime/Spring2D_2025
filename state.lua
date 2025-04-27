@@ -33,7 +33,7 @@ function menu_update()
         shrooms[i].anim:update()
     end
 
-    if (btnp(❎)) then game_init() end
+    if (btnp(❎)) then game_init(LEVELS[1]) end
 end
 
 

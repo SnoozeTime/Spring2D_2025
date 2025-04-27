@@ -4,7 +4,9 @@ function _init()
 end
 
 
-function game_init()
+function game_init(level_desc)
+
+  printh(LEVELS)
 
   -- set the new callbacks
   _update = game_update
@@ -18,11 +20,14 @@ function game_init()
            divisions = 10,
          }
 
+  -- rivers etc
+  env = river:new{}
+
   ninja = hero:new{
-           pos = {x = flr(rnd(120)), y = flr(rnd(120))},
+           pos = {x = level_desc.start_pos[1], y = level_desc.start_pos[2]},
            bounds = {w = 128, h = 128},
          }
-  for i=1,5 do
+  for i=1,level_desc.mushrooms do
     while true do  -- please don't take too long lmao
       local pos = {x = flr(rnd(120)), y = flr(rnd(120))}
       if shroom_grid:empty(pos) then
@@ -37,7 +42,7 @@ function game_init()
   spores = {}
 
   roses = {}
-  for i=1,1 do
+  for i=1,level_desc.roses do
     add(roses, rose:new{
       pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
     })
@@ -54,6 +59,7 @@ end
 function game_draw()
   rectfill(0,0,127,127,0)
   map()
+  env:draw()
   for i=1,#roses do
     roses[i]:draw()
   end
@@ -71,6 +77,7 @@ function game_draw()
 end
 
 function game_update()
+  env:update()
   ninja:update(shroom_grid, vines)
   local dead_vines = {}
   for id,shroom in pairs(shroom_grid.grid) do
@@ -118,7 +125,7 @@ function game_update()
   -- Update the vines
   --------------------
   for i=1,#vines do
-    local message = vines[i]:update(ninja)
+    local message = vines[i]:update(ninja, env)
     if message then
       if message.id == vine.REMOVE then
         add(dead_vines, i)
