@@ -5,6 +5,8 @@ function menu_init()
     _draw = menu_draw
 
 
+    
+    music(12)
     -- let's draw a bunch of mushrooms
     shrooms = {}
     for i=1,10 do
