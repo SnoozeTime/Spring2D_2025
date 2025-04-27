@@ -146,7 +146,7 @@ function game_update(state)
   end
   local dead_roses = {}
   for i=1,#state.roses do
-    if not state.roses[i]:update() then
+    if state.roses[i]:update() then
       add(dead_roses, i)
     end
   end
