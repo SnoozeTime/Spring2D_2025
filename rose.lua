@@ -18,6 +18,8 @@ function rose:new(o)
     h = 2,
     loop = true,
   }
+
+
   return o
 end
 
@@ -33,12 +35,12 @@ function rose:wither()
     self.withering = true
     self.anim = anim:new{
       t = 0,
-      trans_color = 6,
+      trans_color = 5,
       frame = 1,
-      frame_length = 0,
-      frames = {8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0,8,0},
-      w = 1,
-      h = 1,
+      frame_length = 10,
+      frames = {70, 72, 74},
+      w = 2,
+      h = 2,
       loop = false,
     }
   end

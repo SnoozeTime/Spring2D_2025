@@ -6,7 +6,7 @@ end
 function game_init(level_index)
   local state = {
     LEVELS = {
-      {mushrooms=1, roses=1, start_pos={5,5}, vines=1, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
+      {mushrooms=1, roses=3, start_pos={5,5}, vines=1, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
       {mushrooms=3, roses=1, start_pos={5,5}, vines=2, river={river_start={0,64},river_end={128,64}, bridge={64,64}}},
     },
   }
