@@ -1,15 +1,14 @@
 -- State for the main menu
 
 function menu_init()
-    _update = menu_update
-    _draw = menu_draw
-    
     music(12)
-    text = bubbletext("press x/o to start the game", {x=10, y=108})
+    local state = {
+      text = bubbletext("press x/o to start the game", {x=10, y=108}),
+    }
     -- let's draw a bunch of mushrooms
-    shrooms = {}
+    state.shrooms = {}
     for i=1,10 do
-        add(shrooms, shroom:new{
+        add(state.shrooms, {
         pos = {x = flr(rnd(120)), y = flr(rnd(120))},
         anim =  anim:new{
             t = 0,
@@ -24,30 +23,32 @@ function menu_init()
         })
     end
    
+    _update = function() menu_update(state) end
+    _draw = function() menu_draw(state) end
 end 
 
 
-function menu_update()
-    for i=1,#shrooms do
-        shrooms[i].anim:update()
+function menu_update(state)
+    for i=1,#state.shrooms do
+        state.shrooms[i].anim:update()
     end
 
-    text:update()
+    state.text:update()
 
     -- start the first level
     if (btnp(4) or btnp(5)) then game_init(1) end
 end
 
 
-function menu_draw()
+function menu_draw(state)
     cls(7)
     palt()
     palt(0, false)
     palt(6, true)
     map(32, 0)
 
-    for i=1,#shrooms do
-        shrooms[i].anim:draw(shrooms[i].pos.x, shrooms[i].pos.y, shrooms[i].pos.x > 64, false)
+    for i=1,#state.shrooms do
+        state.shrooms[i].anim:draw(state.shrooms[i].pos.x, state.shrooms[i].pos.y, state.shrooms[i].pos.x > 64, false)
     end
 
 
@@ -59,7 +60,7 @@ function menu_draw()
     sx, sy = (sp % 16) * 8, (sp \ 16) * 8
     sspr(sx, sy, 8*5, 8*3, 25, 60, 8*5*2, 8*3*2)
     --spr(128, 56, 50, 5, 3)
-    text:draw()
+    state.text:draw()
 end
 
 -- State for the main game
