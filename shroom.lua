@@ -84,6 +84,9 @@ function shroom:update(roses)
   end
 
   if self.alive then
+    if self.growing and not self.growing:done() then
+      return nil
+    end
     self.spore_t += 1
     if self.spore_t >= self.SPORE_WAIT_FRAMES then
       self.spore_t = 0

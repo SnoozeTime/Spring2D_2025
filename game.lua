@@ -35,20 +35,18 @@ function game_init(level_index)
          }
 
   state.roses = {}
-  local rose_grid_keys = {}
   for i=1,level_desc.roses do
     local r = rose:new{
       pos = {x = flr(rnd(120-rose.SIZE)), y = flr(rnd(120-rose.SIZE))},
     }
     add(state.roses, r)
-    rose_grid_keys[state.shroom_grid:key(r:center())] = true
   end
 
   for i=1,level_desc.mushrooms do
     while true do  -- please don't take too long lmao
       local pos = {x = flr(rnd(120)), y = flr(rnd(120))}
       -- Don't overlap roses or other mushrooms
-      if not rose_grid_keys[state.shroom_grid:key(pos)] and state.shroom_grid:empty(pos) then
+      if not close_to_roses(state.roses, pos) and state.shroom_grid:empty(pos) then
         state.shroom_grid:insert(pos, shroom:new{
           pos = pos,
         })
@@ -73,6 +71,17 @@ function game_init(level_index)
       pos = {x = vine_x, y = vine_y}}
     )
   end
+end
+
+function close_to_roses(roses, pos)
+  for i=1,#roses do
+    local rc = roses[i]:center()
+    local _, len = math.normalize({x = rc.x - pos.x, y = rc.y - pos.y})
+    if len < 30 then
+      return true
+    end
+  end
+  return false
 end
 
 function game_draw(state)
