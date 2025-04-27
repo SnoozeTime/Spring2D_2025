@@ -17,7 +17,7 @@ function game_init()
            bounds = {w = 128, h = 128},
          }
   shrooms = {}
-  for i=1,3 do
+  for i=1,1 do
     add(shrooms, shroom:new{
       pos = {x = flr(rnd(120)), y = flr(rnd(120))},
       bounds = {w = 128, h = 128},

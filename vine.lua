@@ -26,6 +26,7 @@ function vine:new(o)
     dir, len = math.normalize({x=flr(rnd(120))- o.pos.x, y=flr(rnd(120))-o.pos.y})
     o.dir = dir
     o.state = "walking"
+    o.caught_hero = false
     o.facing = sgn(o.dir.x)
     o.current_walk_frames = flr(rnd(self.MAX_WALK_FRAME-self.MIN_WALK_FRAME))+self.MIN_WALK_FRAME
     o.segments = 0
@@ -70,6 +71,7 @@ function vine:reiinit()
 
     -- release state
     self.release_counter = 0
+    self.caught_hero = false
 end
 
 
@@ -103,9 +105,9 @@ function vine:update(hero)
     elseif self.state == "shooting" then
 
 
-        -- first check collision with the hero
+        -- first check collision with the hero 
         local collided = false
-        if self.segments > 0 then
+        if self.segments > 0 and hero.state == "player_control" then
             local colcirc = {
                 x = self.pos.x + self.segments * 8 * sgn(self.dir.x),
                 y = self.pos.y,
@@ -117,6 +119,7 @@ function vine:update(hero)
             if col then
                 self.state = "attracting"
                 collided = true
+                self.caught_hero = true
                 hero:vine_catch()
             end
         end
@@ -140,7 +143,7 @@ function vine:update(hero)
 
 
         -- if hero was caught, update its position to the tip of the vine
-        if hero.state == "caught_by_vine" then
+        if hero.state == "caught_by_vine" and self.caught_hero then
             hero.pos.x = self.pos.x + self.segments * 8 * sgn(self.dir.x)
             hero.pos.y = self.pos.y
         end
@@ -154,7 +157,10 @@ function vine:update(hero)
 
         if self.segments == 0 then
             self.state = "walking"
-            hero:vine_release()
+
+            if self.caught_hero then
+                hero:vine_release()
+            end
 
             -- reinitialize the walking state
             self:reiinit()
