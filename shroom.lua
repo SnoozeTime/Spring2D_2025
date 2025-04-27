@@ -56,12 +56,17 @@ function shroom:collide(collision)
   if self.alive then
     self.alive = false
     sfx(0)
+    local d = self.anim.frames[self.anim.frame]
+    if self.growing then
+      d = self.growing.frames[self.growing.frame]
+    end
+    self.growing = nil  -- old enough to die :P
     self.anim = anim:new{
       t = 0,
       trans_color = 6,
       frame = 1,
       frame_length = 0,
-      frames = {5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0,5,0},
+      frames = {d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0,d,0},
       w = 1,
       h = 1,
       loop = false,
@@ -74,7 +79,6 @@ end
 function shroom:update(roses)
   if self.growing and not self.growing:done() then
     self.growing:update()
-    return nil
   else
     self.anim:update()
   end
