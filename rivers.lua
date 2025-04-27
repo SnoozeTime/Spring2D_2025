@@ -47,7 +47,7 @@ function river:new(o)
 end
 
 
-function river:in_river(x, y, r)
+function river:in_river(x, y, river_margin)
 
     colliding = false
 
@@ -56,7 +56,7 @@ function river:in_river(x, y, r)
 
         local v = {x = x - self.sprites[i].pos.x, y = y - self.sprites[i].pos.y}
         local distance = sqrt(v.x* v.x + v.y * v.y)
-        if distance < 6 then
+        if distance < 6+river_margin then
             colliding = true
             break
         end
