@@ -35,6 +35,17 @@ function hero:new(o)
     loop = true,
   }
   o.blade = nil
+
+  o.vine_catch_anim = anim:new{
+    t = 0,
+    trans_color = 6,
+    frame = 1,
+    frame_length = 3,
+    frames = {21,53},
+    w = 1,
+    h = 1,
+    loop = true,
+  }
   return o
 end
 
@@ -143,9 +154,9 @@ function hero:update(enemies)
       end
     end
 
-  else
+  elseif self.state == "caught_by_vine" then
     -- State when not in control
-    -- TODO add animation when caught.
+    self.vine_catch_anim:update()
 
   end
 end
@@ -159,14 +170,17 @@ function hero:vine_release()
 end
 
 function hero:draw()
-  if self.vel.x == 0 and self.vel.y == 0 then
-    self.idle_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
-  else
-    self.moving_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
-  end
-  if self.blade then
-    self.blade:draw(self.pos.x + (self.facing < 0 and -8 or 8), self.pos.y, self.facing < 0)
-  end
 
-  -- TODO print caught animation
+  if self.state == "player_control" then
+    if self.vel.x == 0 and self.vel.y == 0 then
+      self.idle_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+    else
+      self.moving_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+    end
+    if self.blade then
+      self.blade:draw(self.pos.x + (self.facing < 0 and -8 or 8), self.pos.y, self.facing < 0)
+    end
+  elseif self.state == "caught_by_vine" then
+    self.vine_catch_anim:draw(self.pos.x, self.pos.y, self.facing < 0)
+  end
 end
